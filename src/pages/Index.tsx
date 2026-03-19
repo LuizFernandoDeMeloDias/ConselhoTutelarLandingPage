@@ -1,5 +1,7 @@
-import { Shield, Users, BookOpen, Phone, Scale, Heart, AlertTriangle, HandHeart } from "lucide-react";
-import heroImage from "@/assets/hero-image.jpg";
+import { Users, BookOpen, Phone, Scale, Heart, AlertTriangle, HandHeart } from "lucide-react";
+import backgroundImage from "@/assets/hero-image.jpg"; // use o hero-image existente ou substitua por background.png/jpg
+import logoImage from "@/assets/hero-image.jpg";       // substitua por logo.png quando estiver disponível
+import { FAQSearch } from "@/components/ui/FAQSearch.tsx";
 
 const Index = () => {
   return (
@@ -8,7 +10,7 @@ const Index = () => {
       <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Shield className="h-7 w-7 text-primary" />
+            <img src={logoImage} alt="Conselho Tutelar" className="h-12 w-12 object-contain" />
             <span className="font-heading text-lg font-bold text-foreground">Conselho Tutelar</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
@@ -16,6 +18,7 @@ const Index = () => {
             <a href="#eca" className="hover:text-primary transition-colors">ECA</a>
             <a href="#objetivos" className="hover:text-primary transition-colors">Objetivos</a>
             <a href="#direitos" className="hover:text-primary transition-colors">Direitos</a>
+            <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
             <a href="#contato" className="hover:text-primary transition-colors">Contato</a>
           </nav>
         </div>
@@ -24,12 +27,13 @@ const Index = () => {
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary text-primary-foreground">
         <div className="absolute inset-0 opacity-20">
-          <img src={heroImage} alt="" className="h-full w-full object-cover" />
+          <img src={backgroundImage} alt="" className="h-full w-full object-cover" />
         </div>
         <div className="relative container py-24 md:py-36 text-center">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-secondary opacity-90 animate-fade-in">
+          {/* subtitle removed as requested */}
+          {/* <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-secondary opacity-90 animate-fade-in">
             Projeto de Extensão — UNIASSELVI
-          </p>
+          </p> */}
           <h1 className="mx-auto max-w-3xl text-3xl md:text-5xl font-heading font-bold leading-tight animate-fade-in-up">
             Protegendo os Direitos de Crianças e Adolescentes
           </h1>
@@ -38,10 +42,10 @@ const Index = () => {
             e o Estatuto da Criança e do Adolescente (ECA).
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-            <a href="#sobre" className="inline-flex items-center justify-center rounded-lg bg-secondary px-8 py-3 font-semibold text-secondary-foreground hover:opacity-90 transition-opacity">
+            <a href="#contato" className="inline-flex items-center justify-center rounded-lg bg-secondary px-8 py-3 font-semibold text-secondary-foreground hover:opacity-90 transition-opacity">
               Saiba Mais
             </a>
-            <a href="#contato" className="inline-flex items-center justify-center rounded-lg border-2 border-primary-foreground/30 px-8 py-3 font-semibold text-primary-foreground hover:bg-primary-foreground/10 transition-colors">
+            <a href="#direitos" className="inline-flex items-center justify-center rounded-lg border-2 border-primary-foreground/30 px-8 py-3 font-semibold text-primary-foreground hover:bg-primary-foreground/10 transition-colors">
               Denuncie
             </a>
           </div>
@@ -49,7 +53,7 @@ const Index = () => {
       </section>
 
       {/* About */}
-      <section id="sobre" className="py-20 md:py-28">
+      <section id="sobre" className="py-20 md:py-28 scroll-mt-20">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-2xl md:text-4xl font-heading font-bold text-foreground">
@@ -82,7 +86,7 @@ const Index = () => {
       </section>
 
       {/* ECA */}
-      <section id="eca" className="section-alt py-20 md:py-28">
+      <section id="eca" className="section-alt py-20 md:py-28 scroll-mt-20">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-2xl md:text-4xl font-heading font-bold text-foreground">
@@ -115,7 +119,7 @@ const Index = () => {
       </section>
 
       {/* Objectives */}
-      <section id="objetivos" className="py-20 md:py-28">
+      <section id="objetivos" className="py-20 md:py-28 scroll-mt-20">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-2xl md:text-4xl font-heading font-bold text-foreground">
@@ -147,7 +151,7 @@ const Index = () => {
       </section>
 
       {/* Rights / How to report */}
-      <section id="direitos" className="bg-primary text-primary-foreground py-20 md:py-28">
+      <section id="direitos" className="bg-primary text-primary-foreground py-20 md:py-28 scroll-mt-20">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-2xl md:text-4xl font-heading font-bold">
@@ -178,8 +182,15 @@ const Index = () => {
         </div>
       </section>
 
+      {/* FAQ Search */}
+      <section id="faq" className="section-alt py-20 md:py-28 scroll-mt-20">
+        <div className="container">
+          <FAQSearch />
+        </div>
+      </section>
+
       {/* Contact / Info */}
-      <section id="contato" className="py-20 md:py-28">
+      <section id="contato" className="py-20 md:py-28 scroll-mt-20">
         <div className="container max-w-3xl mx-auto text-center">
           <BookOpen className="mx-auto h-12 w-12 text-primary mb-6" />
           <h2 className="text-2xl md:text-4xl font-heading font-bold text-foreground">
@@ -214,7 +225,7 @@ const Index = () => {
       <footer className="border-t border-border bg-card py-10">
         <div className="container text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <Shield className="h-5 w-5 text-primary" />
+            <img src={logoImage} alt="Logo Conselho Tutelar" className="h-10 w-10 object-contain" />
             <span className="font-heading text-sm font-bold text-foreground">Conselho Tutelar — Projeto de Extensão</span>
           </div>
           <p className="text-sm text-muted-foreground">
