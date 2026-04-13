@@ -58,6 +58,9 @@ export function FAQSearch() {
   const [searchResult, setSearchResult] = useState<FAQItem | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [expandedCardId, setExpandedCardId] = useState<number | null>(null);
+  const [suggestions, setSuggestions] = useState<FAQItem[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isListExpanded, setIsListExpanded] = useState(false);
 
   const normalizeText = (text: string): string =>
     text.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").trim();
@@ -91,64 +94,141 @@ export function FAQSearch() {
     setHasSearched(true);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchInput(query);
+
+    if (!query.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const queryWords = normalizeText(query).split(/\s+/).filter((w) => w.length > 1);
+
+    const scores = faqData.map((item) => {
+      const question = normalizeText(item.question);
+      const tags = item.tags.map((tag) => normalizeText(tag));
+      let score = 0;
+
+      queryWords.forEach((word) => {
+        if (question.includes(word)) score += 3;
+        if (tags.some((tag) => tag.includes(word))) score += 1;
+      });
+
+      return { item, score };
+    });
+
+    const matched = scores
+      .filter((s) => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map((s) => s.item);
+
+    setSuggestions(matched);
+    setShowSuggestions(true);
+  };
+
+  const handleSuggestionClick = (item: FAQItem) => {
+    setSearchInput(item.question);
+    setShowSuggestions(false);
+    setSearchResult(item);
+    setHasSearched(true);
+  };
+
   const toggleCard = (id: number) => setExpandedCardId((curr) => (curr === id ? null : id));
 
   return (
-    <div className="w-full space-y-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold text-foreground">Dúvidas Frequentes</h2>
-          <p className="text-muted-foreground">Digite sua pergunta e encontre a resposta que procura.</p>
+    <div className="w-full space-y-8 text-white">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-8">
+        <div className="text-center mb-10">
+          <h2 className="text-[clamp(2rem,4vw,3rem)] font-black text-white drop-shadow-md mb-4">Dúvidas Frequentes</h2>
+          <p className="text-white/80 text-lg">Digite sua pergunta e encontre a resposta que procura.</p>
         </div>
 
-        <div className="space-y-3">
-          <input
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleSearch(searchInput); }}
-            placeholder="Ex: quando devo procurar o Conselho Tutelar?"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={() => handleSearch(searchInput)}
-            className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg"
-          >
-            Buscar
-          </button>
+        <div className="relative z-20 max-w-3xl mx-auto">
+          <div className="relative flex items-center">
+            <input
+              value={searchInput}
+              onChange={handleInputChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch(searchInput);
+                  setShowSuggestions(false);
+                }
+              }}
+              onFocus={() => {
+                if (suggestions.length > 0) setShowSuggestions(true);
+              }}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              placeholder="Ex: quando devo procurar o Conselho Tutelar?"
+              className="w-full rounded-full border border-white/30 bg-white/10 backdrop-blur-md pl-8 pr-[120px] py-4 text-white placeholder-white/70 shadow-lg outline-none transition focus:bg-white/20 focus:border-white/50"
+            />
+            <button
+              onClick={() => handleSearch(searchInput)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white px-6 py-2.5 font-bold text-[#f7186a] shadow-lg transition hover:bg-white/90 hover:scale-105"
+            >
+              Buscar
+            </button>
+            {showSuggestions && suggestions.length > 0 && (
+              <ul className="absolute left-0 right-0 top-full z-30 mt-2 rounded-[1.5rem] border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl max-h-60 overflow-y-auto divide-y divide-white/10 animate-fade-in">
+                {suggestions.map((item) => (
+                  <li
+                    key={item.id}
+                    onMouseDown={() => handleSuggestionClick(item)}
+                    className="cursor-pointer px-6 py-4 text-slate-100 transition hover:bg-white/10"
+                  >
+                    {item.question}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         {hasSearched && searchResult && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-5">
-            <h3 className="font-semibold text-gray-800">{searchResult.question}</h3>
-            <p className="text-gray-700 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: searchResult.answer }} />
+          <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-6 shadow-xl">
+            <h3 className="font-semibold text-white">{searchResult.question}</h3>
+            <p className="text-white/80 whitespace-pre-wrap mt-2" dangerouslySetInnerHTML={{ __html: searchResult.answer }} />
           </div>
         )}
 
         {hasSearched && !searchResult && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-5 text-center">
-            <p className="font-medium text-yellow-800">😕 Não encontramos uma resposta para sua pergunta.</p>
-            <p className="text-yellow-700">Tente buscar com termos diferentes ou entre em contato nos canais oficiais.</p>
+          <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-6 text-center text-white">
+            <p className="font-medium text-white">😕 Não encontramos uma resposta para sua pergunta.</p>
+            <p className="text-white/80 mt-2">Tente buscar com termos diferentes ou entre em contato nos canais oficiais.</p>
           </div>
         )}
       </div>
 
       <div className="px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {faqData.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg border border-gray-200 shadow hover:shadow-lg transition-shadow">
+        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {(isListExpanded ? faqData : faqData.slice(0, 3)).map((item) => (
+            <div key={item.id} className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md shadow-lg transition hover:-translate-y-1 hover:bg-white/20 hover:border-white/30">
               <button
-                className="w-full p-5 text-left flex justify-between items-center"
+                className="w-full p-6 text-left flex justify-between items-center gap-4"
                 onClick={() => toggleCard(item.id)}
               >
-                <span className="font-semibold text-gray-800">{item.question}</span>
-                <ChevronDown className={`w-5 h-5 text-gray-600 transition-transform ${expandedCardId === item.id ? "rotate-180" : ""}`} />
+                <span className="font-bold text-white">{item.question}</span>
+                <ChevronDown className={`w-6 h-6 shrink-0 text-white transition-transform ${expandedCardId === item.id ? "rotate-180" : ""}`} />
               </button>
               {expandedCardId === item.id ? (
-                <div className="p-5 border-t border-gray-200 text-gray-700 text-sm whitespace-pre-wrap animate-fade-in" dangerouslySetInnerHTML={{ __html: item.answer }} />
+                <div className="border-t border-white/10 p-6 pt-4 text-white/80 text-sm whitespace-pre-wrap animate-fade-in" dangerouslySetInnerHTML={{ __html: item.answer }} />
               ) : null}
             </div>
           ))}
         </div>
+
+        {faqData.length > 3 && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => setIsListExpanded(!isListExpanded)}
+              className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-lg px-8 py-4 text-base font-bold text-white transition hover:bg-white/30 hover:scale-105"
+            >
+              {isListExpanded ? "Mostrar menos" : "Ver todas as dúvidas"}
+              <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isListExpanded ? "rotate-180" : ""}`} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
