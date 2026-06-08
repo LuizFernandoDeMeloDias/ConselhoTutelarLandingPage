@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import informativoVideo from "../assets/Informativo.mp4";
 
 interface FAQItem {
   id: number;
@@ -141,6 +142,11 @@ export function FAQSearch() {
     <div className="w-full space-y-8 text-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-8">
         <div className="text-center mb-10">
+          <video 
+            controls 
+            className="w-full rounded-lg shadow-lg mb-6"
+            src={informativoVideo}
+          />
           <h2 className="text-[clamp(2rem,4vw,3rem)] font-black text-white drop-shadow-md mb-4">Dúvidas Frequentes</h2>
           <p className="text-white/80 text-lg">Digite sua pergunta e encontre a resposta que procura.</p>
         </div>

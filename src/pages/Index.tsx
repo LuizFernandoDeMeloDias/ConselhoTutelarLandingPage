@@ -141,6 +141,20 @@ const Index = () => {
           0% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
           100% { opacity: 0; transform: translate(-50%, -150%) scale(0.2); }
         }
+
+        @keyframes rainbow-animation {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .text-rainbow {
+          background: linear-gradient(to right, #f7186a, #ff6a00, #ffb703, #39ff14, #00f2ff, #f7186a);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: rainbow-animation 5s ease-in-out infinite;
+        }
       `}</style>
       
       <div className="relative">
@@ -152,8 +166,8 @@ const Index = () => {
                 alt="Conselho Tutelar"
                 className="h-10 w-10 rounded-full object-cover ring-2 ring-white/20"
               />
-              <div>
-                <p className="text-base font-black uppercase tracking-widest text-white drop-shadow-sm">Conselho Tutelar</p>
+              <div className="text-base font-black uppercase tracking-widest text-white drop-shadow-sm">
+                <p>Conselho Tutelar</p>
               </div>
             </div>
             <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-white/80">
@@ -177,7 +191,7 @@ const Index = () => {
           <section id="home" className="relative min-h-[90vh] bg-gradient-to-br from-[#f7186a] via-[#ff6a00] to-[#ffb703] pt-40 pb-32 flex flex-col justify-center overflow-hidden">
             <div className="container relative z-10 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div className="space-y-8">
-                <h1 className="text-[clamp(3rem,6vw,4.5rem)] font-black leading-[1.1] text-white drop-shadow-[2px_4px_10px_rgba(0,0,0,0.2)]">
+                <h1 className="text-rainbow text-[clamp(3rem,6vw,4.5rem)] font-black leading-[1.1] drop-shadow-[2px_4px_10px_rgba(0,0,0,0.2)]">
                   Conselho Tutelar
                 </h1>
                 <p className="text-lg font-medium text-white/90 max-w-xl">
@@ -203,7 +217,7 @@ const Index = () => {
                   <img
                     src={heroImage}
                     alt="Imagem representando crianças e adolescentes"
-                    className="w-full h-auto max-h-[900px] rounded-[20px] object-contain drop-shadow-2xl animate-float-1"
+                    className="w-full h-auto max-h-[900px] rounded-[20px] object-contain drop-shadow-2xl"
                   />
                 </div>
               </div>
